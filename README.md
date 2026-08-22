@@ -2,7 +2,7 @@
 
 # 🌌 ZCity Breach
 
-<p><i>Переработка и развитие Utopia Breach.</i></p>
+<p><i>Переработка и развитие Zcity Breach.</i></p>
 
 [![Discord](https://img.shields.io/badge/Discord-Join_Community-7289da?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/)
 
