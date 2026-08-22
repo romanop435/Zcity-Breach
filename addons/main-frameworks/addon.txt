@@ -1,0 +1,6 @@
+AddonInfo
+{
+	"name" 	"Legacy Breach - Frameworks (glide, wos/dynabase)"
+	"author_name" 	"uzelezz123"
+	"info" 	"{ \"description\": \"Vendored frameworks used by Legacy UBreach: Glide vehicle framework and wOS DynaBase. Kept as a small addon because they self-locate their files via hardcoded addon-root LUA paths (file.Find with bare glide/wos paths) and would break if merged into the gamemode folder.\", \"type\": \"gamemode\", \"tags\": [] }"
+}
