@@ -1,0 +1,36 @@
+screenspace_general
+{
+	$pixshader "pixelated_effect_ps30_1"
+	$vertexshader "pixelated_effect_vs30_1"
+	
+	$cull 0
+	
+	$depthtest 1
+	$writedepth 0
+	
+	$basetexture "pixelated/test"
+	$texture1 "pixelated/pixelstripes1"
+	
+	$c0_x 512
+	$c0_y 512
+	
+	$c0_z 64
+	$c0_w 64
+
+	$c1_x 3
+	$c1_y 1
+	$c1_z 0
+	
+	Proxies
+	{
+		PixelatedFog
+		{
+		}
+	}
+	
+	$vertexcolor 1
+	$vertexalpha 1
+	$model 1
+	$softwareskin 1
+	$vertexnormal 1
+}

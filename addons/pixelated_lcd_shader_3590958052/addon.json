@@ -1,0 +1,10 @@
+{
+  "title": "Pixelated LCD Shader",
+  "type": "tool",
+  "tags": [
+    "realism"
+  ],
+  "ignore": [
+    "usage.md"
+  ]
+}
