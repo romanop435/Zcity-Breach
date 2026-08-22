@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" 						"models\characters\avp_marine\weapons\flamethrower\flamethrower_colout"
+	"$bumpmap" 							"models\characters\avp_marine\weapons\flamethrower\flamethrower_colout_normal"
+	
+	"$allowdiffusemodulation" 			"0"
+	"$ambientocclusion" 				"1"
+	
+	"$nodecal" 							"1"
+
+	"$phong" 							"1"
+	"$phongboost"						"1"
+	"$phongexponent" 					"3"
+	"$phongfresnelranges"				"[0.3 0.3 0.3]"
+}
