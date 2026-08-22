@@ -1,0 +1,172 @@
+if SERVER then AddCSLuaFile() end
+
+SWEP.Base = "weapon_tpik_base"
+SWEP.PrintName = "ДАДО Сок «Осторожно ГОРЯЧО»"
+SWEP.Category = "RP"
+SWEP.Spawnable = true
+SWEP.AdminSpawnable = true
+
+if CLIENT then
+    SWEP.InvIcon = Material("nextoren/gui/new_icons/scp/scp3238_fire.png")
+    SWEP.IconOverride = "nextoren/gui/new_icons/scp/scp3238_fire.png"
+    SWEP.red = "SCP"
+    SWEP.BounceWeaponIcon = false
+end
+
+SWEP.HoldType = "slam"
+SWEP.ViewModel = ""
+SWEP.WorldModel = "models/cultist/items/drinks/w_energy_drink.mdl"
+SWEP.WorldModelReal = "models/cultist/items/drinks/v_energy_drink.mdl"
+SWEP.WorldModelExchange = false
+
+SWEP.AutoSwitchTo = false
+SWEP.AutoSwitchFrom = false
+SWEP.Slot = 1
+SWEP.SlotPos = 1
+SWEP.WorkWithFake = true
+
+
+SWEP.setlh = false
+SWEP.setrh = true
+SWEP.UseHands = true
+
+
+SWEP.HoldAng = Angle(0, 0, 0)
+SWEP.HoldPos = Vector(-4, -2, -1)
+
+SWEP.droppable = true
+
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = -1
+SWEP.Primary.Automatic = false
+SWEP.Primary.Ammo = "none"
+
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+SWEP.Secondary.Automatic = false
+SWEP.Secondary.Ammo = "none"
+
+SWEP.Skin = 4
+local viewpunch_angle = Angle(-15, 0, 0)
+
+
+SWEP.AnimList = {
+    ["deploy"] = {"deploy", 0.5, false},
+    ["idle"] = {"idle", 5, true},
+    ["use"] = {"use", 1.5, false, false, function(self)
+        
+        self.IsDrinking = false
+        if SERVER then
+            local owner = self:GetOwner()
+            if IsValid(owner) then
+                
+                owner:SelectWeapon("br_holster")
+            end
+            self:Remove()
+        end
+    end}
+}
+
+function SWEP:InitializeAdd()
+    self:SetHold(self.HoldType)
+    self:PlayAnim("deploy")
+end
+
+function SWEP:Deploy()
+    self.Initialzed = true
+    self.IsDrinking = false
+    self:PlayAnim("deploy")
+    self:SetHold(self.HoldType)
+
+    timer.Simple(0.25, function()
+        if IsValid(self) and IsValid(self:GetOwner()) then
+            self:GetOwner():EmitSound("weapons/m249/handling/m249_armmovement_02.wav", 75, math.random(100, 120), 1, CHAN_WEAPON)
+        end
+    end)
+    return true
+end
+
+function SWEP:Holster()
+    
+    if self.IsDrinking then return false end
+    return true
+end
+
+function SWEP:OnRemove()
+    local wepID = self:EntIndex()
+    timer.Remove("DadoFirePunch_" .. wepID)
+    timer.Remove("DadoFireDrink_" .. wepID)
+end
+
+function SWEP:PrimaryAttack()
+    if self:GetNextPrimaryFire() > CurTime() then return end
+    if self.IsDrinking then return end
+
+    local owner = self:GetOwner()
+    if not IsValid(owner) then return end
+
+    self.IsDrinking = true
+    self:SetNextPrimaryFire(CurTime() + 4)
+
+    self:PlayAnim("use")
+
+    local wepID = self:EntIndex()
+
+    
+    timer.Create("DadoFirePunch_" .. wepID, 0.5, 1, function()
+        if IsValid(self) and IsValid(owner) then
+            if SERVER then owner:ViewPunch(viewpunch_angle) end
+        end
+    end)
+
+    
+    
+    timer.Create("DadoFireDrink_" .. wepID, 1.5, 1, function()
+        if not IsValid(self) or not IsValid(owner) then return end
+
+        if SERVER then
+            
+            if owner.RemoveItemClass then
+                owner:RemoveItemClass(self:GetClass())
+            end
+
+            
+            if owner.Dado then
+                owner:Dado(2) 
+            end
+
+            
+            if owner.organism then
+                
+                owner.organism.satiety = math.min((owner.organism.satiety or 0) + 10, 100)
+                owner.organism.hungry = math.max((owner.organism.hungry or 0) - 10, 0)
+
+                
+                owner.organism.painadd = (owner.organism.painadd or 0) + 25
+                
+                
+                local dmgInfo = DamageInfo()
+                dmgInfo:SetDamage(5)
+                dmgInfo:SetDamageType(DMG_BURN)
+                dmgInfo:SetAttacker(owner)
+                dmgInfo:SetInflictor(self)
+                
+                if hg and hg.organism and hg.organism.input_list and hg.organism.input_list.trachea then
+                    hg.organism.input_list.trachea(owner.organism, 0, 0.1, dmgInfo)
+                end
+            end
+        end
+    end)
+end
+
+function SWEP:SecondaryAttack()
+    return false
+end
+
+
+function SWEP:DrawPostWorldModel()
+    local wm = self:GetWM()
+    if IsValid(wm) and wm:GetSkin() ~= self.Skin then
+        wm:SetSkin(self.Skin)
+    end
+end
